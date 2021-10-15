@@ -43,7 +43,10 @@ class ItemRepository extends Repository
             // Update relationships
             foreach ($data[self::FIELD_PRICE] as $subKey => $subValue) {
                 /** @var \App\Models\Price $itemPrice */
-                $itemPrice = $item->Prices()->make();
+                $itemPrice = $item->Prices()
+                    ->firstOrNew([
+                        'currency' => $subValue['currency'],
+                    ]);
 
                 $itemPrice->amount = $subValue['amount'];
                 $itemPrice->currency = $subValue['currency'];
