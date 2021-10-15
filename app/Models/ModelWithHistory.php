@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Interfaces\HasHistory;
+use App\Interfaces\IHistory;
 use App\Models\History\History;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-abstract class ModelWithHistory extends Model implements HasHistory
+abstract class ModelWithHistory extends Model implements IHistory
 {
     /**
      * @var bool

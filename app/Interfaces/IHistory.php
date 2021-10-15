@@ -5,7 +5,7 @@ namespace App\Interfaces;
 /**
  * @property \App\Models\History\History History
  */
-interface HasHistory
+interface IHistory
 {
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
