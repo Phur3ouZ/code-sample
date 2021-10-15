@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\ValidatedInput;
 
 class Item extends ModelWithHistory
 {
@@ -19,7 +18,7 @@ class Item extends ModelWithHistory
     public function Price(): HasOne
     {
         return $this->hasOne(Price::class, 'item_id', 'id')
-            ->where('currency', '=', 'NZD');
+            ->where('currency', '=', config('currency.default'));
     }
 
     /**
