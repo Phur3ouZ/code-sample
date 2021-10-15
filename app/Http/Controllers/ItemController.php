@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\ItemRepository;
 use App\Http\Resources\ItemResource;
+use App\Interfaces\IRepository;
 use App\Models\Item;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -10,6 +12,16 @@ use Illuminate\Validation\ValidationException;
 
 class ItemController extends Controller
 {
+    /**
+     * @var \App\Http\Repositories\ItemRepository
+     */
+    private IRepository $repository;
+
+    public function __construct(ItemRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Retrieve all records from the `items` table
      *
@@ -30,23 +42,16 @@ class ItemController extends Controller
      */
     public function store(): JsonResponse
     {
-        $rules = [
-            'barcode' => ['required'],
-            'name' => ['string', 'nullable'],
-            'description' => ['string', 'nullable'],
-        ];
-
         try {
-            $payload = $this->validate(request(), $rules);
+            $payload = $this->validate(request(), $this->repository->getRules('create'));
         } catch (ValidationException $e) {
             return response()->json($e->getMessage(), 400);
         }
 
         try {
-            $item = new Item();
-            $item->updateWithTransaction($payload);
+            $item = $this->repository->update(new Item(), $payload);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), 400);
+            return response()->json($e->getMessage(), 500);
         }
 
         $resource = new ItemResource($item);
@@ -64,7 +69,7 @@ class ItemController extends Controller
         try {
             $item = Item::query()->findOrFail($id);
         } catch (ModelNotFoundException $e) {
-            return response()->json($e->getMessage(), 400);
+            return response()->json($e->getMessage(), 404);
         }
 
         $resource = new ItemResource($item);
@@ -80,23 +85,20 @@ class ItemController extends Controller
      */
     public function update(int $id): JsonResponse
     {
-        $rules = [
-            'barcode' => ['required'],
-            'name' => ['string', 'nullable'],
-            'description' => ['string', 'nullable'],
-        ];
-
         try {
-            $payload = $this->validate(request(), $rules);
+            $payload = $this->validate(request(), $this->repository->getRules('edit'));
         } catch (ValidationException $e) {
             return response()->json($e->getMessage(), 400);
         }
 
         try {
+            /** @var \App\Models\Item $item */
             $item = Item::query()->findOrFail($id);
-            $item->updateWithTransaction($payload);
-        } catch (ModelNotFoundException | \Exception $e) {
-            return response()->json($e->getMessage(), 400);
+            $item = $this->repository->update($item, $payload);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
         }
 
         $resource = new ItemResource($item);
@@ -113,8 +115,8 @@ class ItemController extends Controller
     {
         try {
             $item = Item::query()->findOrFail($id);
-        } catch (ModelNotFoundException | \Exception $e) {
-            return response()->json($e->getMessage(), 400);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e->getMessage(), 404);
         }
 
         $item->delete();
