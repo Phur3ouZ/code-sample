@@ -14,7 +14,8 @@ class CurrencyCommand extends Command
      *
      * @var string
      */
-    protected $name = 'currency:load';
+    protected $signature = 'currency:load
+                    {--truncate : Remove existing currencies in database}';
 
     /**
      * The console command description.
@@ -25,6 +26,11 @@ class CurrencyCommand extends Command
 
     public function handle()
     {
+        if ($this->option('truncate')) {
+            $this->info('Attempting to truncate currencies table...');
+            Currency::query()->truncate();
+        }
+
         $this->info('Attempting to load currencies...');
 
         $service = new CurrencyService();
