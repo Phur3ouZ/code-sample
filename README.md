@@ -19,7 +19,7 @@ Using Laravel as the framework, this aims to demonstrate an understanding of:
 ## Requirements
 
 1. PHP 8.0+
-2. [Composer](https://getcomposer.org/download/) (v2.1.9])
+2. [Composer](https://getcomposer.org/download/) (v2.1.9)
 
 ## Installation
 
