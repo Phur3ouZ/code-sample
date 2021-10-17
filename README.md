@@ -45,6 +45,12 @@ Using Laravel as the framework, this aims to demonstrate an understanding of:
 - PUT api/items/{item}
 - DELETE api/items/{item}
 
+Request parameters
+
+```
+?currency=AUD // Will return item values from NZD prices to AUD
+```
+
 Request body
 
 ```json
