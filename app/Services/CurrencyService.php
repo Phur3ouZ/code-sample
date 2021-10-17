@@ -26,7 +26,7 @@ class CurrencyService extends BaseService
     public function get(string $uri, array $options = []): array
     {
         $options['query'] = array_merge([
-            'apiKey' => 'd82745f75be6b3f4a0a0', // TODO - shift into environment variable
+            'apiKey' => env('CURRENCY_API_KEY'),
         ], $options['query'] ?? []);
 
         return parent::get($uri, $options);
